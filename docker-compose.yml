@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  SQL-MASTER:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: maher
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: maher
+      MYSQL_PASSWORD: maher
+    networks:
+      - wp_network
+   
+
+  SQL-SLAVE01:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: maher
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: maher
+      MYSQL_PASSWORD: maher
+      REPLICATION_MASTER: SQL-MASTER
+      REPLICATION_USER: maher
+      REPLICATION_PASSWORD: maher
+    networks:
+      - wp_network
+  WP:
+    image: wordpress
+    environment:
+      WORDPRESS_DB_HOST: SQL-MASTER
+      WORDPRESS_DB_USER: maher
+      WORDPRESS_DB_PASSWORD: maher
+    networks:
+      - wp_network
+    ports:
+      - "8080:80"
+    depends_on:
+      - SQL-MASTER
+
+
+
+networks:
+  wp_network:
